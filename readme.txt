@@ -1,0 +1,94 @@
+=== SportsPress for Cricket ===
+Contributors: ThemeBoy, brianmiyaji, aylaview
+Tags: sport, sports, players, statistics, stats, metrics, data, fixtures, results, standings, leaderboards, cricket
+Donate link: http://tboy.co/donate
+Requires at least: 3.8
+Tested up to: 4.3
+Stable tag: 0.9
+License: GPLv3
+License URI: http://www.gnu.org/licenses/gpl-3.0.html
+
+SportsPress for Cricket is an extension for SportsPress, an all-in-one sports data plugin that helps sports clubs set up a cricket website.
+
+== Description ==
+
+= Create a Professional Cricket Website =
+Transform your WordPress blog into a fully configurable cricket website. Features a suite of cricket tools including separate batting and bowling statistics, a row to display extras and players who did not bat.
+
+SportsPress for Cricket is currently in Beta. Please feel free to share your feedback with us so we can continue to develop and improve SportsPress for Cricket!
+
+[youtube http://www.youtube.com/watch?v=LQ68LB1_9rU]
+
+= Features =
+* Cricket Admin Branding to replace the [SportsPress](https://wordpress.org/plugins/sportspress/) icon with a cricket ball
+* Schedule Matches (Fixtures & Results)
+* Record Extras
+* Calculate Totals including Extras
+* Display players who did not bat in a separate section
+* Swap batsmen from home and away team in scorecard
+
+= SportsPress Pro =
+
+Looking for more advanced cricket functionality? Upgrade to [SportsPress Pro](http://tboy.co/pro) to get access to more advanced features for your cricket club website.
+
+= SportsPress Themes for Clubs =
+* [Football Club](http://tboy.co/fc)
+* [Premier](http://tboy.co/premier)
+
+= Please Rate, Vote, and Enjoy! =
+Your feedback is much appreciated and makes all the difference in improving SportsPress for Cricket.
+
+== Installation ==
+
+= Minimum Requirements =
+* WordPress 3.8 or greater
+* [SportsPress](https://wordpress.org/plugins/sportspress/) 1.9 or greater
+* PHP version 5.2.4 or greater
+* MySQL version 5.0 or greater
+
+= Automatic Installation =
+
+Automatic installation is the easiest option as WordPress handles the file transfers itself and you don't even need to leave your web browser. To do an automatic install of SportsPress for Cricket, log in to your WordPress admin panel, navigate to the Plugins menu and click Add New.
+
+In the search field type "SportsPress for Cricket" and click Search Plugins. Once you've found our cricket plugin you can view details about it such as the point release, rating and description. Most importantly of course, you can install it by simply clicking Install Now. After clicking that link you will be asked if you're sure you want to install the plugin. Click yes and WordPress will automatically complete the installation.
+
+= Manual Installation =
+
+The manual installation method involves downloading our cricket plugin and uploading it to your webserver via your favorite FTP application.
+
+1. Download the plugin file to your computer and unzip it
+2. Using an FTP program, or your hosting control panel, upload the unzipped plugin folder to your WordPress installation's wp-content/plugins/ directory.
+3. Activate the plugin from the Plugins menu within the WordPress admin.
+
+= Upgrading =
+
+Automatic updates should work like a charm; as always though, ensure you backup your site just in case.
+
+If on the off-chance you do encounter issues with the event/team/player/staff pages after an update you simply need to flush the permalinks by going to WordPress > Settings > Permalinks and hitting 'save'. That should return things to normal.
+
+== Screenshots ==
+
+1. The Edit Match screen featuring Extras and Did Not Bat option.
+2. Bowlers are swapped between the innings and players who did not bat are displayed in a separate section.
+
+== Frequently Asked Questions ==
+
+= Will SportsPress for Cricket work with my theme? =
+
+Yes; SportsPress for Cricket will work with any theme, but may require some styling to make it match nicely.
+
+= Can I import teams/players/staff/matches? =
+
+Yes, CSV importers are included with the core SportsPress plugin. Go to Tools > Import and choose from one of the SportsPress CSV importers.
+
+== Changelog ==
+
+= 0.9 =
+* Feature - Add a row to record extras.
+* Feature - Calculate total event performance including extras.
+* Feature - Display players who did not bat in a separate section.
+* Feature - Swap batsmen from home and away team in scorecard.
+* Tweak - Display cricket ball icon in place of SportsPress logo.
+* Tweak - Display events as matches.
+* Tweak - Display substitutes as did not bat.
+* Tweak - Remove substitute dropdown.
