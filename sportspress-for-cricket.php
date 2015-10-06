@@ -46,12 +46,15 @@ class SportsPress_Cricket {
 		add_action( 'sportspress_event_performance_table_footer', array( $this, 'table_footer' ), 10, 4 );
 		add_filter( 'sportspress_event_performance_table_total_value', array( $this, 'table_total_value' ), 10, 3 );
 		add_filter( 'sportspress_event_performance_split_team_players', array( $this, 'split_team_players' ) );
-		add_filter( 'sportspress_event_performance_split_team_split_position_subdata', array( $this, 'subdata' ), 10, 2 );
+		add_filter( 'sportspress_event_performance_split_team_split_position_subdata', array( $this, 'subdata' ), 10, 3 );
 		add_filter( 'sportspress_event_performance_show_footer', '__return_true' );
 
 		// Display subs separately
 		add_action( 'sportspress_after_event_performance_table', array( $this, 'subs' ), 10, 4 );
 		add_filter( 'sportspress_event_performance_players', array( $this, 'players' ), 10, 2 );
+
+		// Add bowling order
+		add_filter( 'sportspress_event_performance_number_label', array( $this, 'number_label' ) );
 	}
 
 	/**
@@ -264,9 +267,19 @@ class SportsPress_Cricket {
 	/**
 	 * Add extra subdata to split team split position players.
 	*/
-	public function subdata( $subdata = array(), $data = array() ) {
+	public function subdata( $subdata = array(), $data = array(), $index = 0 ) {
+		if ( 1 == $index ) {
+			uasort( $subdata, array( $this, 'sort_by_number' ) );
+		}
 		$subdata[-1] = sp_array_value( $data, -1, array() );
 		return $subdata;
+	}
+
+	/**
+	 * Sort array by number subvalue.
+	*/
+	public function sort_by_number( $a, $b ) {
+		return $a['number'] - $b['number'];
 	}
 
 	/**
@@ -296,6 +309,13 @@ class SportsPress_Cricket {
 			<?php printf( __( 'Did not bat: %s', 'sportspress' ), implode( ', ', $names ) ); ?>
 		</p>
 		<?php
+	}
+
+	/**
+	 * Display number as bowling order.
+	*/
+	public function number_label() {
+		return __( 'Bowling Order', 'sportspress' );
 	}
 }
 
