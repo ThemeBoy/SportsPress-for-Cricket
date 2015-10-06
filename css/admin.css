@@ -1,3 +1,7 @@
 #adminmenu #toplevel_page_sportspress .toplevel_page_sportspress div.wp-menu-image:before {
 	content: '\e604';
 }
+
+table.widefat.sp-performance-notes-table tbody tr:nth-child(2n-1) {
+	background-color: #f9f9f9;
+}
