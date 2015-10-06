@@ -54,13 +54,12 @@ class SportsPress_Cricket {
 		add_filter( 'sportspress_event_performance_players', array( $this, 'players' ), 10, 2 );
 
 		// Add bowling order
-		add_filter( 'sportspress_event_performance_number_label', array( $this, 'number_label' ) );
 		add_filter( 'sportspress_event_performance_split_team_split_position_subdata', array( $this, 'performance_order' ), 10, 3 );
 		add_filter( 'sportspress_event_performance_split_position_subdata', array( $this, 'performance_order' ), 10, 3 );
 
 		// Add notes table and display in performance
 		add_filter( 'sportspress_event_performance_tabs_admin', array( $this, 'performance_tabs' ) );
-		add_action( 'sportspress_after_event_performance_table_admin', array( $this, 'admin_performance_notes' ), 10, 4 );
+		add_action( 'sportspress_after_event_performance_table_admin', array( $this, 'adming_batting_performance' ), 10, 4 );
 		add_filter( 'sportspress_event_performance_labels', array( $this, 'performance_labels' ) );
 		add_filter( 'sportspress_event_performance_allowed_labels', array( $this, 'performance_labels' ), 10, 2 );
 		add_filter( 'sportspress_event_performance_labels_admin', array( $this, 'admin_labels' ) );
@@ -311,46 +310,40 @@ class SportsPress_Cricket {
 	}
 
 	/**
-	 * Display number as bowling order.
-	*/
-	public function number_label() {
-		return __( 'Bowling Order', 'sportspress' );
-	}
-
-	/**
-	 * Sort bowlers by bowling order.
+	 * Sort batsmen by batting order.
 	*/
 	public function performance_order( $subdata = array(), $data = array(), $index = 0 ) {
-		if ( 1 == $index ) {
-			uasort( $subdata, array( $this, 'sort_by_number' ) );
+		if ( 0 == $index ) {
+			uasort( $subdata, array( $this, 'sort_by_batting_order' ) );
 		}
 		return $subdata;
 	}
 
 	/**
-	 * Sort array by number subvalue.
+	 * Sort array by batting order.
 	*/
-	public function sort_by_number( $a, $b ) {
-		return sp_array_value( $a, 'number', 0 ) - sp_array_value( $b, 'number', 0 );
+	public function sort_by_batting_order( $a, $b ) {
+		return sp_array_value( $a, '_order', 0 ) - sp_array_value( $b, '_order', 0 );
 	}
 
 	/**
 	 * Add tab for notes.
 	*/
 	public function performance_tabs( $tabs = array() ) {
-		$tabs['notes'] = __( 'Notes', 'sportspress' );
+		$tabs['batting'] = __( 'Batting', 'sportspress' );
 		return $tabs;
 	}
 
 	/**
-	 * Add tab for notes.
+	 * Add tab for batting.
 	*/
-	public function	admin_performance_notes( $labels = array(), $columns = array(), $data = array(), $team_id = 0 ) {
+	public function	adming_batting_performance( $labels = array(), $columns = array(), $data = array(), $team_id = 0 ) {
 		?>
 		<div class="sp-data-table-container hidden">
-			<table class="widefat sp-data-table sp-performance-notes-table">
+			<table class="widefat sp-data-table sp-performance-batting-table">
 				<thead>
 					<tr>
+						<th><?php _e( 'Order', 'sportspress' ); ?></th>
 						<th><?php _e( 'Player', 'sportspress' ); ?></th>
 						<th><?php _e( 'Notes', 'sportspress' ); ?></th>
 					</tr>
@@ -359,14 +352,16 @@ class SportsPress_Cricket {
 					<?php foreach ( $data as $player_id => $player_performance ) { ?>
 						<?php if ( $player_id <= 0 ) continue; ?>
 						<tr class="sp-row sp-post">
+							<td><input type="text" class="small-text" name="sp_players[<?php echo $team_id; ?>][<?php echo $player_id; ?>][_order]" value="<?php echo sp_array_value( sp_array_value( $data, $player_id, array() ), '_order', '' ); ?>"></td>
 							<td><?php echo get_the_title( $player_id ); ?></td>
-							<td><input type="text" class="widefat" name="sp_players[<?php echo $team_id; ?>][<?php echo $player_id; ?>][notes]" value="<?php echo sp_array_value( sp_array_value( $data, $player_id, array() ), 'notes', '' ); ?>"></td>
+							<td><input type="text" class="widefat" name="sp_players[<?php echo $team_id; ?>][<?php echo $player_id; ?>][_notes]" value="<?php echo sp_array_value( sp_array_value( $data, $player_id, array() ), '_notes', '' ); ?>"></td>
 						</tr>
 					<?php } ?>
 				<tfoot>
 					<tr>
+						<td>&nbsp;</td>
 						<td><strong><?php _e( 'Extras', 'sportspress' ); ?></strong></td>
-						<td><input type="text" class="widefat" name="sp_players[<?php echo $team_id; ?>][-1][notes]" value="<?php echo sp_array_value( sp_array_value( $data, -1, array() ), 'notes', '' ); ?>"></th>
+						<td><input type="text" class="widefat" name="sp_players[<?php echo $team_id; ?>][-1][_notes]" value="<?php echo sp_array_value( sp_array_value( $data, -1, array() ), '_notes', '' ); ?>"></td>
 					</tr>
 				</tfoot>
 			</table>
@@ -379,7 +374,7 @@ class SportsPress_Cricket {
 	*/
 	public function performance_labels( $labels = array(), $index = 0 ) {
 		if ( 0 !== $index ) return $labels;
-		$labels = array( 'notes' => '' ) + $labels;
+		$labels = array( '_notes' => '' ) + $labels;
 		return $labels;
 	}
 
@@ -387,7 +382,7 @@ class SportsPress_Cricket {
 	 * Remove notes from admin labels.
 	*/
 	public function admin_labels( $labels ) {
-		unset( $labels['notes'] );
+		unset( $labels['_notes'] );
 		return $labels;
 	}
 }
