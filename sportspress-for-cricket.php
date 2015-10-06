@@ -1,11 +1,14 @@
 <?php
 /*
-Plugin Name: SportsPress for Cricket
-Plugin URI: http://themeboy.com/
-Description: A suite of cricket features for SportsPress.
-Author: ThemeBoy
-Author URI: http://themeboy.com/
-Version: 0.9
+ * Plugin Name: SportsPress for Cricket
+ * Plugin URI: http://themeboy.com/
+ * Description: A suite of cricket features for SportsPress.
+ * Author: ThemeBoy
+ * Author URI: http://themeboy.com/
+ * Version: 0.9
+ *
+ * Text Domain: sportspress-for-cricket
+ * Domain Path: /languages/
 */
 
 // Exit if accessed directly
@@ -63,6 +66,14 @@ class SportsPress_Cricket {
 		add_filter( 'sportspress_event_performance_labels', array( $this, 'performance_labels' ) );
 		add_filter( 'sportspress_event_performance_allowed_labels', array( $this, 'performance_labels' ), 10, 2 );
 		add_filter( 'sportspress_event_performance_labels_admin', array( $this, 'admin_labels' ) );
+
+		// Display formatted results
+		add_filter( 'sportspress_event_logo_options', array( $this, 'event_logo_options' ) );
+		add_filter( 'sportspress_event_logos_team_result', array( $this, 'format_result' ), 10, 3 );
+		add_filter( 'sportspress_event_team_result_admin', array( $this, 'format_result' ), 10, 3 );
+		add_filter( 'sportspress_calendar_team_result_admin', array( $this, 'format_result' ), 10, 3 );
+		add_filter( 'sportspress_event_list_main_results', array( $this, 'format_results' ), 10, 2 );
+		add_filter( 'sportspress_event_blocks_team_result_or_time', array( $this, 'format_results' ), 10, 2 );
 	}
 
 	/**
@@ -144,26 +155,26 @@ class SportsPress_Cricket {
 		if ( $domain == 'sportspress' ) {
 			switch ( $untranslated_text ) {
 				case 'Events':
-					$translated_text = _x( 'Matches', 'cricket', 'sportspress' );
+					$translated_text = __( 'Matches', 'cricket', 'sportspress-for-cricket' );
 					break;
 				case 'Event':
-					$translated_text = _x( 'Match', 'cricket', 'sportspress' );
+					$translated_text = __( 'Match', 'cricket', 'sportspress-for-cricket' );
 					break;
 				case 'Add New Event':
-					$translated_text = _x( 'Add New Match', 'cricket', 'sportspress' );
+					$translated_text = __( 'Add New Match', 'cricket', 'sportspress-for-cricket' );
 					break;
 				case 'Edit Event':
-					$translated_text = _x( 'Edit Match', 'cricket', 'sportspress' );
+					$translated_text = __( 'Edit Match', 'cricket', 'sportspress-for-cricket' );
 					break;
 				case 'View Event':
-					$translated_text = _x( 'View Match', 'cricket', 'sportspress' );
+					$translated_text = __( 'View Match', 'cricket', 'sportspress-for-cricket' );
 					break;
 				case 'View all events':
-					$translated_text = _x( 'View all matches', 'cricket', 'sportspress' );
+					$translated_text = __( 'View all matches', 'cricket', 'sportspress-for-cricket' );
 					break;
 				case 'Substitute':
 				case 'Substituted':
-					$translated_text = _x( 'Did Not Bat', 'cricket', 'sportspress' );
+					$translated_text = __( 'Did Not Bat', 'cricket', 'sportspress-for-cricket' );
 					break;
 			}
 		}
@@ -183,7 +194,7 @@ class SportsPress_Cricket {
 			<?php if ( $numbers ) { ?>
 				<td>&nbsp;</td>
 			<?php } ?>
-			<td><strong><?php _e( 'Extras', 'sportspress' ); ?></strong></td>
+			<td><strong><?php _e( 'Extras', 'sportspress-for-cricket' ); ?></strong></td>
 			<?php if ( ! empty( $positions ) ) { ?>
 				<td>&nbsp;</td>
 			<?php } ?>
@@ -219,7 +230,7 @@ class SportsPress_Cricket {
 					if ( $show_numbers ) {
 						echo '<td class="data-number">&nbsp;</td>';
 					}
-					echo '<td class="data-name">' . __( 'Extras', 'sportspress' ) . '</td>';
+					echo '<td class="data-name">' . __( 'Extras', 'sportspress-for-cricket' ) . '</td>';
 				endif;
 
 				$row = sp_array_value( $data, -1, array() );
@@ -304,7 +315,7 @@ class SportsPress_Cricket {
 		}
 		?>
 		<p class="sp-event-performance-simple-subs sp-align-left">
-			<?php printf( __( 'Did not bat: %s', 'sportspress' ), implode( ', ', $names ) ); ?>
+			<?php printf( __( 'Did not bat: %s', 'sportspress-for-cricket' ), implode( ', ', $names ) ); ?>
 		</p>
 		<?php
 	}
@@ -330,7 +341,7 @@ class SportsPress_Cricket {
 	 * Add tab for notes.
 	*/
 	public function performance_tabs( $tabs = array() ) {
-		$tabs['batting'] = __( 'Batting', 'sportspress' );
+		$tabs['batting'] = __( 'Batting', 'sportspress-for-cricket' );
 		return $tabs;
 	}
 
@@ -343,9 +354,9 @@ class SportsPress_Cricket {
 			<table class="widefat sp-data-table sp-performance-batting-table">
 				<thead>
 					<tr>
-						<th><?php _e( 'Order', 'sportspress' ); ?></th>
-						<th><?php _e( 'Player', 'sportspress' ); ?></th>
-						<th><?php _e( 'Notes', 'sportspress' ); ?></th>
+						<th><?php _e( 'Order', 'sportspress-for-cricket' ); ?></th>
+						<th><?php _e( 'Player', 'sportspress-for-cricket' ); ?></th>
+						<th><?php _e( 'Notes', 'sportspress-for-cricket' ); ?></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -360,7 +371,7 @@ class SportsPress_Cricket {
 				<tfoot>
 					<tr>
 						<td>&nbsp;</td>
-						<td><strong><?php _e( 'Extras', 'sportspress' ); ?></strong></td>
+						<td><strong><?php _e( 'Extras', 'sportspress-for-cricket' ); ?></strong></td>
 						<td><input type="text" class="widefat" name="sp_players[<?php echo $team_id; ?>][-1][_notes]" value="<?php echo sp_array_value( sp_array_value( $data, -1, array() ), '_notes', '' ); ?>"></td>
 					</tr>
 				</tfoot>
@@ -384,6 +395,71 @@ class SportsPress_Cricket {
 	public function admin_labels( $labels ) {
 		unset( $labels['_notes'] );
 		return $labels;
+	}
+
+	/**
+	 * Add event logo options.
+	*/
+	public function event_logo_options( $options = array() ) {
+		$options[] = array(
+			'title' 	=> __( 'Delimiter', 'sportspress-for-cricket' ),
+			'id' 		=> 'sportspress_event_logos_results_delimiter',
+			'class' 	=> 'small-text',
+			'default'	=> '/',
+			'type' 		=> 'text',
+		);
+
+		$options[] = array(
+			'title'     => __( 'Format', 'sportspress-for-cricket' ),
+			'desc' 		=> __( 'Reverse order', 'sportspress-for-cricket' ),
+			'id' 		=> 'sportspress_event_logos_reverse_results_format',
+			'default'	=> 'no',
+			'type' 		=> 'checkbox',
+		);
+		return $options;
+	}
+
+	/**
+	 * Format single result.
+	*/
+	public function format_result( $result = '', $id = 0, $team = 0 ) {
+		if ( '' === $result || ! $id || ! $team ) return $result;
+		$results = sp_get_results( $id );
+		$team_results = sp_array_value( $results, $team, array() );
+		if ( ! is_array( $team_results ) || 0 == sizeof( $team_results ) ) return $result;
+		$main = sp_get_main_result_option();
+		while ( key( $team_results ) !== $main ) {
+			next( $team_results );
+		}
+		$val = next( $team_results );
+		if ( false === $val ) {
+			$val = reset( $team_results );
+		}
+		if ( isset( $val ) && ! is_array( $val ) ) {
+			$delimiter = get_option( 'sportspress_event_logos_results_delimiter', '/' );
+			$reverse = get_option( 'sportspress_event_logos_reverse_results_format', 'no' );
+			if ( 'yes' == $reverse ) {
+				$result = $val . $delimiter . $result;
+			} else {
+				$result .= $delimiter . $val;
+			}
+		}
+		return $result;
+	}
+
+	/**
+	 * Format results.
+	*/
+	public function format_results( $results = array(), $id = 0 ) {
+		if ( ! is_array( $results ) || 1 >= sizeof( $results ) || ! $id ) return $results;
+
+		$teams = get_post_meta( $id, 'sp_team' );
+
+		foreach ( $results as $team => $result ) {
+			$results[ $team ] = self::format_result( $result, $id, sp_array_value( $teams, $team, 0 ) );
+		}
+
+		return $results;
 	}
 }
 
