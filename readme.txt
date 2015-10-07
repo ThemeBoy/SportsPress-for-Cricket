@@ -4,7 +4,7 @@ Tags: sport, sports, players, statistics, stats, metrics, data, fixtures, result
 Donate link: http://tboy.co/donate
 Requires at least: 3.8
 Tested up to: 4.3
-Stable tag: 0.9.1
+Stable tag: 0.9.2
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -82,6 +82,11 @@ Yes; SportsPress for Cricket will work with any theme, but may require some styl
 Yes, CSV importers are included with the core SportsPress plugin. Go to Tools > Import and choose from one of the SportsPress CSV importers.
 
 == Changelog ==
+
+= 0.9.2 =
+* Tweak - Change notes column label to empty space character.
+* Fix - Automatic event results calculating without performance.
+* Fix - Empty notes appearing as 0 in scorecard.
 
 = 0.9.1 =
 * Feature - Batting tab in event edit screen to add order and notes.
