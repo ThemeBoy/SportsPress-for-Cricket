@@ -5,7 +5,7 @@
  * Description: A suite of cricket features for SportsPress.
  * Author: ThemeBoy
  * Author URI: http://themeboy.com/
- * Version: 0.9.1
+ * Version: 0.9.2
  *
  * Text Domain: sportspress-for-cricket
  * Domain Path: /languages/
@@ -20,7 +20,7 @@ if ( ! class_exists( 'SportsPress_Cricket' ) ) :
  * Main SportsPress Cricket Class
  *
  * @class SportsPress_Cricket
- * @version	0.9.1
+ * @version	0.9.2
  */
 class SportsPress_Cricket {
 
@@ -66,6 +66,8 @@ class SportsPress_Cricket {
 		add_filter( 'sportspress_event_performance_labels', array( $this, 'performance_labels' ) );
 		add_filter( 'sportspress_event_performance_allowed_labels', array( $this, 'performance_labels' ), 10, 2 );
 		add_filter( 'sportspress_event_performance_labels_admin', array( $this, 'admin_labels' ) );
+		add_filter( 'sportspress_get_event_performance', array( $this, 'event_performance' ) );
+		add_filter( 'sportspress_event_auto_result_bypass_keys', array( $this, 'bypass_keys' ) );
 
 		// Display formatted results
 		add_filter( 'sportspress_event_logo_options', array( $this, 'event_logo_options' ) );
@@ -81,7 +83,7 @@ class SportsPress_Cricket {
 	*/
 	private function define_constants() {
 		if ( !defined( 'SP_CRICKET_VERSION' ) )
-			define( 'SP_CRICKET_VERSION', '0.9.1' );
+			define( 'SP_CRICKET_VERSION', '0.9.2' );
 
 		if ( !defined( 'SP_CRICKET_URL' ) )
 			define( 'SP_CRICKET_URL', plugin_dir_url( __FILE__ ) );
@@ -385,7 +387,7 @@ class SportsPress_Cricket {
 	*/
 	public function performance_labels( $labels = array(), $index = 0 ) {
 		if ( 0 !== $index ) return $labels;
-		$labels = array( '_notes' => '' ) + $labels;
+		$labels = array( '_notes' => '&nbsp;' ) + $labels;
 		return $labels;
 	}
 
@@ -395,6 +397,32 @@ class SportsPress_Cricket {
 	public function admin_labels( $labels ) {
 		unset( $labels['_notes'] );
 		return $labels;
+	}
+
+	/**
+	 * Append notes with blank space to prevent rendering as zero.
+	*/
+	public function event_performance( $data = array() ) {
+		if ( ! is_array( $data ) || 0 == sizeof( $data ) ) return $data;
+
+		foreach ( $data as $team_id => $player ) {
+			if ( ! is_array( $player ) ) continue;
+
+			foreach ( $player as $player_id => $stats ) {
+				$data[ $team_id ][ $player_id ]['_notes'] = sp_array_value( $stats, '_notes', '' ) . ' ';
+			}
+		}
+
+		return $data;
+	}
+
+	/**
+	 * Bypass notes when determining automatic results.
+	*/
+	public function bypass_keys( $keys ) {
+		$keys[] = '_order';
+		$keys[] = '_notes';
+		return $keys;
 	}
 
 	/**
