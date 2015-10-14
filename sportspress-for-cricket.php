@@ -463,7 +463,7 @@ class SportsPress_Cricket {
 		if ( false === $val ) {
 			$val = reset( $team_results );
 		}
-		if ( isset( $val ) && ! is_array( $val ) ) {
+		if ( isset( $val ) && ! is_array( $val ) && '' !== $val ) {
 			$delimiter = get_option( 'sportspress_event_logos_results_delimiter', '/' );
 			$reverse = get_option( 'sportspress_event_logos_reverse_results_format', 'no' );
 			if ( 'yes' == $reverse ) {
