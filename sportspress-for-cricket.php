@@ -34,6 +34,10 @@ class SportsPress_Cricket {
 		// Include required files
 		$this->includes();
 
+		// Output generator tag
+		add_action( 'get_the_generator_html', array( $this, 'generator_tag' ), 10, 2 );
+		add_action( 'get_the_generator_xhtml', array( $this, 'generator_tag' ), 10, 2 );
+
 		// Require SportsPress core
 		add_action( 'tgmpa_register', array( $this, 'require_core' ) );
 
@@ -120,6 +124,21 @@ class SportsPress_Cricket {
 	*/
 	private function includes() {
 		require_once dirname( __FILE__ ) . '/includes/class-tgm-plugin-activation.php';
+	}
+
+	/**
+	 * Output generator tag to aid debugging.
+	 */
+	function generator_tag( $gen, $type ) {
+		switch ( $type ) {
+			case 'html':
+				$gen .= "\n" . '<meta name="generator" content="SportsPress for Cricket ' . esc_attr( SP_CRICKET_VERSION ) . '">';
+				break;
+			case 'xhtml':
+				$gen .= "\n" . '<meta name="generator" content="SportsPress for Cricket ' . esc_attr( SP_CRICKET_VERSION ) . '" />';
+				break;
+		}
+		return $gen;
 	}
 
 	/**
