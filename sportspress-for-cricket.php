@@ -406,6 +406,7 @@ class SportsPress_Cricket {
 		if ( ! is_array( $data ) || 0 == sizeof( $data ) ) return $data;
 
 		foreach ( $data as $team_id => $player ) {
+			if ( ! $team_id ) continue;
 			if ( ! is_array( $player ) ) continue;
 
 			foreach ( $player as $player_id => $stats ) {
