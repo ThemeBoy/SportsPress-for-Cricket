@@ -41,37 +41,22 @@ class SportsPress_Cricket {
 		// Require SportsPress core
 		add_action( 'tgmpa_register', array( $this, 'require_core' ) );
 
-		// Enqueue scripts
+		// Enqueue styles and scripts
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ), 30 );
+		add_filter( 'sportspress_enqueue_styles', array( $this, 'add_styles' ) );
 
 		// Change text to reflect cricket terminology
 		add_filter( 'gettext', array( $this, 'gettext' ), 20, 3 );
 
 		// Add extras to event performance
-		add_action( 'sportspress_event_performance_meta_box_table_footer', array( $this, 'meta_box_table_footer' ), 10, 7 );
+		add_action( 'sportspress_event_performance_meta_box_table_footer', array( $this, 'meta_box_table_footer' ), 10, 8 );
 		add_action( 'sportspress_event_performance_table_footer', array( $this, 'table_footer' ), 10, 4 );
-		add_filter( 'sportspress_event_performance_table_total_value', array( $this, 'table_total_value' ), 10, 3 );
-		add_filter( 'sportspress_event_performance_split_team_players', array( $this, 'split_team_players' ) );
-		add_filter( 'sportspress_event_performance_split_team_split_position_subdata', array( $this, 'subdata' ), 20, 3 );
 		add_filter( 'sportspress_event_performance_show_footer', '__return_true' );
 
 		// Display subs separately
-		add_action( 'sportspress_after_event_performance_table', array( $this, 'subs' ), 10, 4 );
 		add_filter( 'sportspress_event_performance_players', array( $this, 'players' ), 10, 2 );
-
-		// Add bowling order
-		add_filter( 'sportspress_event_performance_split_team_split_position_subdata', array( $this, 'performance_order' ), 10, 3 );
-		add_filter( 'sportspress_event_performance_split_position_subdata', array( $this, 'performance_order' ), 10, 3 );
-
-		// Add notes table and display in performance
-		add_filter( 'sportspress_event_performance_tabs_admin', array( $this, 'performance_tabs' ) );
-		add_action( 'sportspress_after_event_performance_table_admin', array( $this, 'adming_batting_performance' ), 10, 4 );
-		add_filter( 'sportspress_event_performance_labels', array( $this, 'performance_labels' ) );
-		add_filter( 'sportspress_event_performance_allowed_labels', array( $this, 'performance_labels' ), 10, 2 );
-		add_filter( 'sportspress_event_performance_labels_admin', array( $this, 'admin_labels' ) );
-		add_filter( 'sportspress_get_event_performance', array( $this, 'event_performance' ) );
-		add_filter( 'sportspress_event_auto_result_bypass_keys', array( $this, 'bypass_keys' ) );
+		add_action( 'sportspress_after_event_performance_table', array( $this, 'subs' ), 10, 4 );
 
 		// Display formatted results
 		add_filter( 'sportspress_event_logo_options', array( $this, 'event_logo_options' ) );
@@ -117,6 +102,19 @@ class SportsPress_Cricket {
 		}
 
 		wp_enqueue_style( 'sportspress-cricket-admin', SP_CRICKET_URL . 'css/admin.css', array( 'sportspress-admin-menu-styles' ), '0.9' );
+	}
+
+	/**
+	 * Add stylesheet.
+	*/
+	public static function add_styles( $styles = array() ) {
+		$styles['sportspress-for-cricket'] = array(
+			'src'     => str_replace( array( 'http:', 'https:' ), '', SP_CRICKET_URL ) . '/css/sportspress-for-cricket.css',
+			'deps'    => '',
+			'version' => SP_CRICKET_VERSION,
+			'media'   => 'all'
+		);
+		return $styles;
 	}
 
 	/**
@@ -176,26 +174,32 @@ class SportsPress_Cricket {
 		if ( $domain == 'sportspress' ) {
 			switch ( $untranslated_text ) {
 				case 'Events':
-					$translated_text = __( 'Matches', 'cricket', 'sportspress-for-cricket' );
+					$translated_text = __( 'Matches', 'sportspress-for-cricket' );
 					break;
 				case 'Event':
-					$translated_text = __( 'Match', 'cricket', 'sportspress-for-cricket' );
+					$translated_text = __( 'Match', 'sportspress-for-cricket' );
 					break;
 				case 'Add New Event':
-					$translated_text = __( 'Add New Match', 'cricket', 'sportspress-for-cricket' );
+					$translated_text = __( 'Add New Match', 'sportspress-for-cricket' );
 					break;
 				case 'Edit Event':
-					$translated_text = __( 'Edit Match', 'cricket', 'sportspress-for-cricket' );
+					$translated_text = __( 'Edit Match', 'sportspress-for-cricket' );
 					break;
 				case 'View Event':
-					$translated_text = __( 'View Match', 'cricket', 'sportspress-for-cricket' );
+					$translated_text = __( 'View Match', 'sportspress-for-cricket' );
 					break;
 				case 'View all events':
-					$translated_text = __( 'View all matches', 'cricket', 'sportspress-for-cricket' );
+					$translated_text = __( 'View all matches', 'sportspress-for-cricket' );
 					break;
 				case 'Substitute':
 				case 'Substituted':
-					$translated_text = __( 'Did Not Bat', 'cricket', 'sportspress-for-cricket' );
+					$translated_text = __( 'Did Not Bat', 'sportspress-for-cricket' );
+					break;
+				case 'Offense':
+					$translated_text = __( 'Batting', 'sportspress-for-cricket' );
+					break;
+				case 'Defense':
+					$translated_text = __( 'Bowling', 'sportspress-for-cricket' );
 					break;
 			}
 		}
@@ -206,7 +210,8 @@ class SportsPress_Cricket {
 	/**
 	 * Display extras in event edit page.
 	*/
-	public function meta_box_table_footer( $data = array(), $labels = array(), $team_id = 0, $positions = array(), $status = true, $sortable = true, $numbers = true ) {
+	public function meta_box_table_footer( $data = array(), $labels = array(), $team_id = 0, $positions = array(), $status = true, $sortable = true, $numbers = true, $section = -1 ) {
+		if ( 1 == $section ) return;
 		?>
 		<tr class="sp-row sp-post sp-extras">
 			<?php if ( $sortable ) { ?>
@@ -219,12 +224,13 @@ class SportsPress_Cricket {
 			<?php if ( ! empty( $positions ) ) { ?>
 				<td>&nbsp;</td>
 			<?php } ?>
-			<?php foreach( $labels as $column => $label ):
-				$player_performance = sp_array_value( $data, -1, array() );
-				$value = sp_array_value( $player_performance, $column, '' );
-				?>
-				<td><input type="text" name="sp_players[<?php echo $team_id; ?>][-1][<?php echo $column; ?>]" value="<?php echo $value; ?>" /></td>
-			<?php endforeach; ?>
+			<?php
+				$colspan = 1;
+				if ( is_array( $labels ) ) {
+					$colspan = sizeof( $labels );
+				}
+			?>
+			<td colspan="<?php echo $colspan; ?>"><input type="text" name="sp_players[<?php echo $team_id; ?>][0][extras]" value="<?php echo sp_array_value( sp_array_value( $data, 0, array() ), 'extras', '' ); ?>" /></td>
 			<?php if ( $status ) { ?>
 				<td>&nbsp;</td>
 			<?php } ?>
@@ -240,12 +246,13 @@ class SportsPress_Cricket {
 		$show_numbers = get_option( 'sportspress_event_show_player_numbers', 'yes' ) === 'yes' ? true : false;
 		$mode = get_option( 'sportspress_event_performance_mode', 'values' );
 
-		$row = sp_array_value( $data, -1, array() );
+		$row = sp_array_value( $data, 0, array() );
 		$row = array_filter( $row );
-		$row = array_intersect_key( $row, $labels );
-		if ( ! empty( $row ) ) {
+		$extras = sp_array_value( $row, 'extras', '' );
+		$extras = trim( $extras );
+		if ( ! empty( $extras ) ) {
 			?>
-			<tr class="sp-extras-row <?php echo ( $i % 2 == 0 ? 'odd' : 'even' ); ?>">
+			<tr class="sp-extras-row">
 				<?php
 				if ( $show_players ):
 					if ( $show_numbers ) {
@@ -254,62 +261,11 @@ class SportsPress_Cricket {
 					echo '<td class="data-name">' . __( 'Extras', 'sportspress-for-cricket' ) . '</td>';
 				endif;
 
-				$row = sp_array_value( $data, -1, array() );
-
-				if ( $mode == 'icons' ) echo '<td class="sp-performance-icons">';
-
-				foreach ( $labels as $key => $label ):
-					if ( 'name' == $key )
-						continue;
-					if ( isset( $position ) && 'position' == $key )
-						continue;
-					if ( $key == 'position' ):
-						$value = '&nbsp;';
-					elseif ( array_key_exists( $key, $row ) && $row[ $key ] != '' ):
-						$value = $row[ $key ];
-					else:
-						$value = '&nbsp;';
-					endif;
-
-					if ( $mode == 'values' ):
-						echo '<td class="data-' . $key . '">' . $value . '</td>';
-					elseif ( intval( $value ) && $mode == 'icons' ):
-						$performance_id = sp_array_value( $performance_ids, $key, null );
-						if ( $performance_id && has_post_thumbnail( $performance_id ) ):
-							echo str_repeat( get_the_post_thumbnail( $performance_id, 'sportspress-fit-mini' ) . ' ', $value );
-						endif;
-					endif;
-				endforeach;
-
-				if ( $mode == 'icons' ) echo '</td>';
+				echo '<td class="data-extras" colspan="' . sizeof( $labels ) . '">' . $extras . '</td>';
 				?>
 			</tr>
 			<?php
 		}
-	}
-
-	/**
-	 * Add extras to performance total.
-	*/
-	public function table_total_value( $value = 0, $data = array(), $key = null ) {
-		$value += sp_array_value( sp_array_value( $data, -1, array() ), $key, 0 );
-		return $value;
-	}
-
-	/**
-	 * Add extra player row to split team players.
-	*/
-	public function split_team_players( $players = array() ) {
-		$players[] = -1;
-		return $players;
-	}
-
-	/**
-	 * Add extra subdata to split team split position players.
-	*/
-	public function subdata( $subdata = array(), $data = array(), $index = 0 ) {
-		$subdata[-1] = sp_array_value( $data, -1, array() );
-		return $subdata;
 	}
 
 	/**
@@ -339,110 +295,6 @@ class SportsPress_Cricket {
 			<?php printf( __( 'Did not bat: %s', 'sportspress-for-cricket' ), implode( ', ', $names ) ); ?>
 		</p>
 		<?php
-	}
-
-	/**
-	 * Sort batsmen by batting order.
-	*/
-	public function performance_order( $subdata = array(), $data = array(), $index = 0 ) {
-		if ( 0 == $index ) {
-			uasort( $subdata, array( $this, 'sort_by_batting_order' ) );
-		}
-		return $subdata;
-	}
-
-	/**
-	 * Sort array by batting order.
-	*/
-	public function sort_by_batting_order( $a, $b ) {
-		return sp_array_value( $a, '_order', 0 ) - sp_array_value( $b, '_order', 0 );
-	}
-
-	/**
-	 * Add tab for notes.
-	*/
-	public function performance_tabs( $tabs = array() ) {
-		$tabs['batting'] = __( 'Batting', 'sportspress-for-cricket' );
-		return $tabs;
-	}
-
-	/**
-	 * Add tab for batting.
-	*/
-	public function	adming_batting_performance( $labels = array(), $columns = array(), $data = array(), $team_id = 0 ) {
-		?>
-		<div class="sp-data-table-container hidden">
-			<table class="widefat sp-data-table sp-performance-batting-table">
-				<thead>
-					<tr>
-						<th><?php _e( 'Order', 'sportspress-for-cricket' ); ?></th>
-						<th><?php _e( 'Player', 'sportspress-for-cricket' ); ?></th>
-						<th><?php _e( 'Notes', 'sportspress-for-cricket' ); ?></th>
-					</tr>
-				</thead>
-				<tbody>
-					<?php foreach ( $data as $player_id => $player_performance ) { ?>
-						<?php if ( $player_id <= 0 ) continue; ?>
-						<tr class="sp-row sp-post">
-							<td><input type="text" class="small-text" name="sp_players[<?php echo $team_id; ?>][<?php echo $player_id; ?>][_order]" value="<?php echo sp_array_value( sp_array_value( $data, $player_id, array() ), '_order', '' ); ?>"></td>
-							<td><?php echo get_the_title( $player_id ); ?></td>
-							<td><input type="text" class="widefat" name="sp_players[<?php echo $team_id; ?>][<?php echo $player_id; ?>][_notes]" value="<?php echo sp_array_value( sp_array_value( $data, $player_id, array() ), '_notes', '' ); ?>"></td>
-						</tr>
-					<?php } ?>
-				<tfoot>
-					<tr>
-						<td>&nbsp;</td>
-						<td><strong><?php _e( 'Extras', 'sportspress-for-cricket' ); ?></strong></td>
-						<td><input type="text" class="widefat" name="sp_players[<?php echo $team_id; ?>][-1][_notes]" value="<?php echo sp_array_value( sp_array_value( $data, -1, array() ), '_notes', '' ); ?>"></td>
-					</tr>
-				</tfoot>
-			</table>
-		</div>
-		<?php
-	}
-
-	/**
-	 * Add notes to performance labels.
-	*/
-	public function performance_labels( $labels = array(), $index = 0 ) {
-		if ( 0 !== $index ) return $labels;
-		$labels = array( '_notes' => '&nbsp;' ) + $labels;
-		return $labels;
-	}
-
-	/**
-	 * Remove notes from admin labels.
-	*/
-	public function admin_labels( $labels ) {
-		unset( $labels['_notes'] );
-		return $labels;
-	}
-
-	/**
-	 * Append notes with blank space to prevent rendering as zero.
-	*/
-	public function event_performance( $data = array() ) {
-		if ( ! is_array( $data ) || 0 == sizeof( $data ) ) return $data;
-
-		foreach ( $data as $team_id => $player ) {
-			if ( ! $team_id ) continue;
-			if ( ! is_array( $player ) ) continue;
-
-			foreach ( $player as $player_id => $stats ) {
-				$data[ $team_id ][ $player_id ]['_notes'] = sp_array_value( $stats, '_notes', '' ) . ' ';
-			}
-		}
-
-		return $data;
-	}
-
-	/**
-	 * Bypass notes when determining automatic results.
-	*/
-	public function bypass_keys( $keys ) {
-		$keys[] = '_order';
-		$keys[] = '_notes';
-		return $keys;
 	}
 
 	/**

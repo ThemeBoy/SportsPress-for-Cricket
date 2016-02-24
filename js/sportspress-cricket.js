@@ -1,6 +1,6 @@
 (function($) {
-	var a = $('.sp-template-event-performance-team-0-position-1')[0];
-	var b = $('.sp-template-event-performance-team-1-position-1')[0];
+	var a = $('.sp-template-event-performance-team-0-section-1')[0];
+	var b = $('.sp-template-event-performance-team-1-section-1')[0];
 	if ( undefined !== a && undefined !== b ) {
 		var t = a.parentNode.insertBefore(document.createTextNode(''), a); 
 		b.parentNode.insertBefore(a, b); 
