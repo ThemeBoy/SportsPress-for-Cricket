@@ -230,7 +230,7 @@ class SportsPress_Cricket {
 					$colspan = sizeof( $labels );
 				}
 			?>
-			<td colspan="<?php echo $colspan; ?>"><input type="text" name="sp_players[<?php echo $team_id; ?>][0][extras]" value="<?php echo sp_array_value( sp_array_value( $data, 0, array() ), 'extras', '' ); ?>" /></td>
+			<td colspan="<?php echo $colspan; ?>"><input type="text" name="sp_players[<?php echo $team_id; ?>][0][_extras]" value="<?php echo sp_array_value( sp_array_value( $data, 0, array() ), '_extras', '' ); ?>" /></td>
 			<?php if ( $status ) { ?>
 				<td>&nbsp;</td>
 			<?php } ?>
@@ -248,7 +248,7 @@ class SportsPress_Cricket {
 
 		$row = sp_array_value( $data, 0, array() );
 		$row = array_filter( $row );
-		$extras = sp_array_value( $row, 'extras', '' );
+		$extras = sp_array_value( $row, '_extras', '' );
 		$extras = trim( $extras );
 		if ( ! empty( $extras ) ) {
 			?>
@@ -261,7 +261,7 @@ class SportsPress_Cricket {
 					echo '<td class="data-name">' . __( 'Extras', 'sportspress-for-cricket' ) . '</td>';
 				endif;
 
-				echo '<td class="data-extras" colspan="' . sizeof( $labels ) . '">' . $extras . '</td>';
+				echo '<td class="data-cricket-extras" colspan="' . sizeof( $labels ) . '">' . $extras . '</td>';
 				?>
 			</tr>
 			<?php
