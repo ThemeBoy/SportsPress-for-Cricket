@@ -55,7 +55,6 @@ class SportsPress_Cricket {
 		add_filter( 'sportspress_event_performance_show_footer', '__return_true' );
 
 		// Display subs separately
-		add_filter( 'sportspress_event_performance_players', array( $this, 'players' ), 10, 2 );
 		add_action( 'sportspress_after_event_performance_table', array( $this, 'subs' ), 10, 4 );
 
 		// Display formatted results
@@ -241,7 +240,9 @@ class SportsPress_Cricket {
 	/**
 	 * Display extras in event page.
 	*/
-	public function table_footer( $data = array(), $labels = array(), $position = null, $performance_ids = null ) {
+	public function table_footer( $data = array(), $labels = array(), $section = -1, $performance_ids = null ) {
+		if ( 1 == $section ) return;
+		
 		$show_players = get_option( 'sportspress_event_show_players', 'yes' ) === 'yes' ? true : false;
 		$show_numbers = get_option( 'sportspress_event_show_player_numbers', 'yes' ) === 'yes' ? true : false;
 		$mode = get_option( 'sportspress_event_performance_mode', 'values' );
