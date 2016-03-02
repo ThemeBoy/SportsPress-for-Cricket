@@ -1,5 +1,13 @@
 /* SportsPress for Cricket */
 
+.sp-template-event-performance-section-0 .sp-data-table tbody tr.sub {
+	display: none;
+}
+
+.sp-template-event-performance-section-1 .sp-data-table tbody tr.sub {
+	background: inherit;
+}
+
 .sp-event-performance-simple-subs {
 	margin-top: 1.25em;
 }
