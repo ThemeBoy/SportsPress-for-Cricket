@@ -64,6 +64,9 @@ class SportsPress_Cricket {
 		add_filter( 'sportspress_calendar_team_result_admin', array( $this, 'format_result' ), 10, 3 );
 		add_filter( 'sportspress_event_list_main_results', array( $this, 'format_results' ), 10, 2 );
 		add_filter( 'sportspress_event_blocks_team_result_or_time', array( $this, 'format_results' ), 10, 2 );
+		
+		// Display outcome below results
+		add_action( 'sportspress_before_single_event', array( $this, 'output_event_outcome' ), 15 );
 	}
 
 	/**
@@ -361,6 +364,93 @@ class SportsPress_Cricket {
 		}
 
 		return $results;
+	}
+
+	/**
+	 * Output event outcome.
+	*/
+	public function output_event_outcome() {
+		if ( ! isset( $id ) )
+			$id = get_the_ID();
+		
+		// Get the winner of the event
+		$winner = sp_get_winner( $id );
+
+		// Return if no winner is set
+		if ( empty( $winner ) )
+			return;
+		
+		// Get the name of the winning team
+		$winner_name = get_the_title( $winner );
+
+		// Get results of the winning team
+		$results = sp_get_results( $id );
+		$winner_results = sp_array_value( $results, $winner, array() );
+
+		// Check that results for the winning team are available
+		if ( ! is_array( $winner_results ) || 0 == sizeof( $winner_results ) ) return;
+		
+		// Get index of winning team
+		$winner_index = array_search( $winner, array_keys( $results ) ); // 0 runs 1 wickets
+		if ( ! in_array( $winner_index, array( 0, 1 ) ) )
+			return;
+		
+		// Get the main result option
+		$main = sp_get_main_result_option();
+		
+		// Find the main result of the winning team
+		$val = reset( $winner_results );
+		while ( key( $winner_results ) !== $main ) {
+			$val = next( $winner_results );
+		}
+		
+		// Get the next result if winning team was batting last
+		if ( 0 == $winner_index ) {
+			$loser = sp_array_value( array_keys( $results ), 1, false );
+		
+			// Return if no entry for losing team
+			if ( false === $loser )
+				return;
+			
+			// Get results of the losing team
+			$loser_results = sp_array_value( $results, $loser, array() );
+
+			// Check that results for the losing team are available
+			if ( ! is_array( $loser_results ) || 0 == sizeof( $loser_results ) ) return;
+		
+			// Find the main result of the losing team
+			$loser_val = reset( $loser_results );
+			while ( key( $loser_results ) !== $main ) {
+				$loser_val = next( $loser_results );
+			}
+			
+			// Subtract runs from losing team
+			if ( is_numeric( $loser_val ) ) {
+				$val -= $loser_val;
+			}
+			
+		} else {
+			$val = next( $winner_results );
+		
+			// Return if no result to report
+			if ( false === $val )
+				return;
+			
+			// Subtract wickets from 10
+			$val = 10 - $val;
+		}
+			
+		?>
+		<p class="sp-event-outcome sp-align-center">
+			<?php
+			if ( 0 == $winner_index ) {
+				printf( __( '%1$s won by %2$s runs', 'sportspress-for-cricket' ), $winner_name, $val );
+			} else {
+				printf( __( '%1$s won by %2$s wickets', 'sportspress-for-cricket' ), $winner_name, $val );
+			}
+			?>
+		</p>
+		<?php
 	}
 }
 
