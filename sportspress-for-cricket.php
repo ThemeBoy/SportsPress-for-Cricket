@@ -391,7 +391,7 @@ class SportsPress_Cricket {
 		if ( ! is_array( $winner_results ) || 0 == sizeof( $winner_results ) ) return;
 		
 		// Get index of winning team
-		$winner_index = array_search( $winner, array_keys( $results ) ); // 0 runs 1 wickets
+		$winner_index = array_search( $winner, array_keys( $results ) );
 		if ( ! in_array( $winner_index, array( 0, 1 ) ) )
 			return;
 		
