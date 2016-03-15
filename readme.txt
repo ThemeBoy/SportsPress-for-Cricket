@@ -15,7 +15,7 @@ SportsPress for Cricket is an extension for SportsPress, an all-in-one sports da
 = Create a Professional Cricket Website =
 Transform your WordPress blog into a fully configurable cricket website. Features a suite of cricket tools including separate batting and bowling statistics, a row to display extras and players who did not bat.
 
-SportsPress for Cricket is currently in Beta. Please feel free to share your feedback with us so we can continue to develop and improve SportsPress for Cricket!
+Please feel free to share your feedback with us so we can continue to develop and improve SportsPress for Cricket!
 
 [youtube http://www.youtube.com/watch?v=LQ68LB1_9rU]
 
