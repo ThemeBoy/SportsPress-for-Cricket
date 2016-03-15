@@ -66,7 +66,8 @@ class SportsPress_Cricket {
 		add_filter( 'sportspress_event_blocks_team_result_or_time', array( $this, 'format_results' ), 10, 2 );
 		
 		// Display outcome below results
-		add_action( 'sportspress_before_single_event', array( $this, 'output_event_outcome' ), 15 );
+		add_action( 'sportspress_before_single_event', array( $this, 'output_event_score_status' ), 15 );
+		add_filter( 'sportspress_event_template_options', array( $this, 'event_template_options' ) );
 	}
 
 	/**
@@ -367,9 +368,12 @@ class SportsPress_Cricket {
 	}
 
 	/**
-	 * Output event outcome.
+	 * Output event score status.
 	*/
-	public function output_event_outcome() {
+	public function output_event_score_status() {
+		if ( 'yes' !== get_option( 'sportspress_event_show_score_status', 'yes' ) )
+			return;
+
 		if ( ! isset( $id ) )
 			$id = get_the_ID();
 		
@@ -441,7 +445,7 @@ class SportsPress_Cricket {
 		}
 			
 		?>
-		<p class="sp-event-outcome sp-align-center">
+		<p class="sp-event-score-status sp-align-center">
 			<?php
 			if ( 0 == $winner_index ) {
 				printf( __( '%1$s won by %2$s runs', 'sportspress-for-cricket' ), $winner_name, $val );
@@ -451,6 +455,23 @@ class SportsPress_Cricket {
 			?>
 		</p>
 		<?php
+	}
+
+	/**
+	 * Add option to display event score status.
+	*/
+	public function event_template_options( $options = array() ) {
+		$option = array(
+			array(
+				'desc' 		=> __( 'Score Status', 'sportspress-for-cricket' ),
+				'id' 		=> 'sportspress_event_show_score_status',
+				'default'	=> 'yes',
+				'type' 		=> 'checkbox',
+				'checkboxgroup'		=> '',
+			),
+		);
+		array_splice( $options, 1, 0, $option );
+		return $options;
 	}
 }
 
