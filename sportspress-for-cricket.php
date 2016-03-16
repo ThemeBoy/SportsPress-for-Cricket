@@ -5,7 +5,7 @@
  * Description: A suite of cricket features for SportsPress.
  * Author: ThemeBoy
  * Author URI: http://themeboy.com/
- * Version: 1.0
+ * Version: 1.0.1
  *
  * Text Domain: sportspress-for-cricket
  * Domain Path: /languages/
@@ -20,7 +20,7 @@ if ( ! class_exists( 'SportsPress_Cricket' ) ) :
  * Main SportsPress Cricket Class
  *
  * @class SportsPress_Cricket
- * @version	1.0
+ * @version	1.0.1
  */
 class SportsPress_Cricket {
 
@@ -75,7 +75,7 @@ class SportsPress_Cricket {
 	*/
 	private function define_constants() {
 		if ( !defined( 'SP_CRICKET_VERSION' ) )
-			define( 'SP_CRICKET_VERSION', '1.0' );
+			define( 'SP_CRICKET_VERSION', '1.0.1' );
 
 		if ( !defined( 'SP_CRICKET_URL' ) )
 			define( 'SP_CRICKET_URL', plugin_dir_url( __FILE__ ) );
@@ -394,13 +394,16 @@ class SportsPress_Cricket {
 		// Check that results for the winning team are available
 		if ( ! is_array( $winner_results ) || 0 == sizeof( $winner_results ) ) return;
 		
+		// Get the main result option
+		$main = sp_get_main_result_option();
+
+		// Check that main results exist for the winning team
+		if ( ! array_key_exists( $main, $winner_results ) ) return;
+		
 		// Get index of winning team
 		$winner_index = array_search( $winner, array_keys( $results ) );
 		if ( ! in_array( $winner_index, array( 0, 1 ) ) )
 			return;
-		
-		// Get the main result option
-		$main = sp_get_main_result_option();
 		
 		// Find the main result of the winning team
 		$val = reset( $winner_results );
@@ -421,6 +424,9 @@ class SportsPress_Cricket {
 
 			// Check that results for the losing team are available
 			if ( ! is_array( $loser_results ) || 0 == sizeof( $loser_results ) ) return;
+		
+			// Check that main results exist for the losing team
+			if ( ! array_key_exists( $main, $loser_results ) ) return;
 		
 			// Find the main result of the losing team
 			$loser_val = reset( $loser_results );
