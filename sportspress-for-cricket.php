@@ -5,7 +5,7 @@
  * Description: A suite of cricket features for SportsPress.
  * Author: ThemeBoy
  * Author URI: http://themeboy.com/
- * Version: 1.0.1
+ * Version: 1.0.2
  *
  * Text Domain: sportspress-for-cricket
  * Domain Path: /languages/
@@ -20,7 +20,7 @@ if ( ! class_exists( 'SportsPress_Cricket' ) ) :
  * Main SportsPress Cricket Class
  *
  * @class SportsPress_Cricket
- * @version	1.0.1
+ * @version	1.0.2
  */
 class SportsPress_Cricket {
 
@@ -33,6 +33,9 @@ class SportsPress_Cricket {
 
 		// Include required files
 		$this->includes();
+		
+		// Load plugin text domain
+		add_action( 'init', array( $this, 'load_plugin_textdomain' ), 0 );
 
 		// Output generator tag
 		add_action( 'get_the_generator_html', array( $this, 'generator_tag' ), 10, 2 );
@@ -75,7 +78,7 @@ class SportsPress_Cricket {
 	*/
 	private function define_constants() {
 		if ( !defined( 'SP_CRICKET_VERSION' ) )
-			define( 'SP_CRICKET_VERSION', '1.0.1' );
+			define( 'SP_CRICKET_VERSION', '1.0.2' );
 
 		if ( !defined( 'SP_CRICKET_URL' ) )
 			define( 'SP_CRICKET_URL', plugin_dir_url( __FILE__ ) );
@@ -125,6 +128,19 @@ class SportsPress_Cricket {
 	*/
 	private function includes() {
 		require_once dirname( __FILE__ ) . '/includes/class-tgm-plugin-activation.php';
+	}
+
+	/**
+	 * Load Localisation files.
+	 *
+	 * Note: the first-loaded translation file overrides any following ones if the same translation is present
+	 */
+	public function load_plugin_textdomain() {
+		$locale = apply_filters( 'plugin_locale', get_locale(), 'sportspress-for-cricket' );
+		
+		// Global + Frontend Locale
+		load_textdomain( 'sportspress-for-cricket', WP_LANG_DIR . "/sportspress-for-cricket/sportspress-for-cricket-$locale.mo" );
+		load_plugin_textdomain( 'sportspress-for-cricket', false, plugin_basename( dirname( __FILE__ ) . "/languages" ) );
 	}
 
 	/**
