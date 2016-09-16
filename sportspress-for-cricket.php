@@ -56,6 +56,7 @@ class SportsPress_Cricket {
 		add_action( 'sportspress_event_performance_meta_box_table_footer', array( $this, 'meta_box_table_footer' ), 10, 8 );
 		add_action( 'sportspress_event_performance_table_footer', array( $this, 'table_footer' ), 10, 4 );
 		add_filter( 'sportspress_event_performance_show_footer', '__return_true' );
+		add_filter( 'sportspress_event_performance_table_total_value', array( $this, 'performance_total' ), 10, 3 );
 
 		// Display subs separately
 		add_action( 'sportspress_after_event_performance_table', array( $this, 'subs' ), 10, 4 );
@@ -67,6 +68,7 @@ class SportsPress_Cricket {
 		add_filter( 'sportspress_calendar_team_result_admin', array( $this, 'format_result' ), 10, 3 );
 		add_filter( 'sportspress_event_list_main_results', array( $this, 'format_results' ), 10, 2 );
 		add_filter( 'sportspress_event_blocks_team_result_or_time', array( $this, 'format_results' ), 10, 2 );
+		add_filter( 'sportspress_main_results_or_time', array( $this, 'format_results' ), 10, 2 );
 		
 		// Display outcome below results
 		add_action( 'sportspress_before_single_event', array( $this, 'output_event_score_status' ), 15 );
@@ -287,6 +289,24 @@ class SportsPress_Cricket {
 			</tr>
 			<?php
 		}
+	}
+
+	/**
+	 * Add extras to total row in box score.
+	*/
+	public function performance_total( $value = 0, $data = array(), $key = null ) {
+		if ( ! $key ) return $value;
+		
+		$main = sp_get_main_result_option();
+		if ( $key !== $main ) return $value;
+		
+		$extras = sp_array_value( sp_array_value( $data, 0, array() ), '_extras', 0 );
+		$extras = substr( $extras, 0, strpos( $extras, ' ' ) );
+		
+		if ( is_numeric( $value ) )
+			$value += $extras;
+		
+		return $value;
 	}
 
 	/**
