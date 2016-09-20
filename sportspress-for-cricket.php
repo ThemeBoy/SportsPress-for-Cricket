@@ -5,7 +5,7 @@
  * Description: A suite of cricket features for SportsPress.
  * Author: ThemeBoy
  * Author URI: http://themeboy.com/
- * Version: 0.9.3
+ * Version: 1.0.2
  *
  * Text Domain: sportspress-for-cricket
  * Domain Path: /languages/
@@ -20,7 +20,7 @@ if ( ! class_exists( 'SportsPress_Cricket' ) ) :
  * Main SportsPress Cricket Class
  *
  * @class SportsPress_Cricket
- * @version	0.9.3
+ * @version	1.0.2
  */
 class SportsPress_Cricket {
 
@@ -33,6 +33,9 @@ class SportsPress_Cricket {
 
 		// Include required files
 		$this->includes();
+		
+		// Load plugin text domain
+		add_action( 'init', array( $this, 'load_plugin_textdomain' ), 0 );
 
 		// Output generator tag
 		add_action( 'get_the_generator_html', array( $this, 'generator_tag' ), 10, 2 );
@@ -53,6 +56,7 @@ class SportsPress_Cricket {
 		add_action( 'sportspress_event_performance_meta_box_table_footer', array( $this, 'meta_box_table_footer' ), 10, 8 );
 		add_action( 'sportspress_event_performance_table_footer', array( $this, 'table_footer' ), 10, 4 );
 		add_filter( 'sportspress_event_performance_show_footer', '__return_true' );
+		add_filter( 'sportspress_event_performance_table_total_value', array( $this, 'performance_total' ), 10, 3 );
 
 		// Display subs separately
 		add_action( 'sportspress_after_event_performance_table', array( $this, 'subs' ), 10, 4 );
@@ -64,6 +68,10 @@ class SportsPress_Cricket {
 		add_filter( 'sportspress_calendar_team_result_admin', array( $this, 'format_result' ), 10, 3 );
 		add_filter( 'sportspress_event_list_main_results', array( $this, 'format_results' ), 10, 2 );
 		add_filter( 'sportspress_event_blocks_team_result_or_time', array( $this, 'format_results' ), 10, 2 );
+		add_filter( 'sportspress_main_results_or_time', array( $this, 'format_results' ), 10, 2 );
+		
+		// Display outcome below results
+		add_action( 'sportspress_after_event_logos', array( $this, 'output_event_score_status' ) );
 	}
 
 	/**
@@ -71,7 +79,7 @@ class SportsPress_Cricket {
 	*/
 	private function define_constants() {
 		if ( !defined( 'SP_CRICKET_VERSION' ) )
-			define( 'SP_CRICKET_VERSION', '0.9.3' );
+			define( 'SP_CRICKET_VERSION', '1.0.2' );
 
 		if ( !defined( 'SP_CRICKET_URL' ) )
 			define( 'SP_CRICKET_URL', plugin_dir_url( __FILE__ ) );
@@ -121,6 +129,19 @@ class SportsPress_Cricket {
 	*/
 	private function includes() {
 		require_once dirname( __FILE__ ) . '/includes/class-tgm-plugin-activation.php';
+	}
+
+	/**
+	 * Load Localisation files.
+	 *
+	 * Note: the first-loaded translation file overrides any following ones if the same translation is present
+	 */
+	public function load_plugin_textdomain() {
+		$locale = apply_filters( 'plugin_locale', get_locale(), 'sportspress-for-cricket' );
+		
+		// Global + Frontend Locale
+		load_textdomain( 'sportspress-for-cricket', WP_LANG_DIR . "/sportspress-for-cricket/sportspress-for-cricket-$locale.mo" );
+		load_plugin_textdomain( 'sportspress-for-cricket', false, plugin_basename( dirname( __FILE__ ) . "/languages" ) );
 	}
 
 	/**
@@ -270,6 +291,24 @@ class SportsPress_Cricket {
 	}
 
 	/**
+	 * Add extras to total row in box score.
+	*/
+	public function performance_total( $value = 0, $data = array(), $key = null ) {
+		if ( ! $key ) return $value;
+		
+		$main = sp_get_main_result_option();
+		if ( $key !== $main ) return $value;
+		
+		$extras = sp_array_value( sp_array_value( $data, 0, array() ), '_extras', 0 );
+		$extras = substr( $extras, 0, strpos( $extras, ' ' ) );
+		
+		if ( is_numeric( $value ) )
+			$value += $extras;
+		
+		return $value;
+	}
+
+	/**
 	 * Remove subs from main box score.
 	*/
 	public function players( $data = array(), $lineups = array() ) {
@@ -302,6 +341,20 @@ class SportsPress_Cricket {
 	 * Add event logo options.
 	*/
 	public function event_logo_options( $options = array() ) {
+		$len = sizeof( $options );
+		
+		$temp = $options[ $len - 1 ];
+
+		$options[ $len - 1 ] = array(
+			'desc' 		=> __( 'Score Status', 'sportspress-for-cricket' ),
+			'id' 		=> 'sportspress_event_show_score_status',
+			'default'	=> 'yes',
+			'type' 		=> 'checkbox',
+			'checkboxgroup'	=> '',
+		);
+		
+		$options[] = $temp;
+
 		$options[] = array(
 			'title' 	=> __( 'Delimiter', 'sportspress-for-cricket' ),
 			'id' 		=> 'sportspress_event_logos_results_delimiter',
@@ -336,7 +389,7 @@ class SportsPress_Cricket {
 		if ( false === $val ) {
 			$val = reset( $team_results );
 		}
-		if ( isset( $val ) && ! is_array( $val ) && '' !== $val ) {
+		if ( isset( $val ) && ! is_array( $val ) && '' !== $val && '10' !== $val ) {
 			$delimiter = get_option( 'sportspress_event_logos_results_delimiter', '/' );
 			$reverse = get_option( 'sportspress_event_logos_reverse_results_format', 'no' );
 			if ( 'yes' == $reverse ) {
@@ -362,8 +415,105 @@ class SportsPress_Cricket {
 
 		return $results;
 	}
+
+	/**
+	 * Output event score status.
+	*/
+	public function output_event_score_status( $id = 0 ) {
+		if ( 'yes' !== get_option( 'sportspress_event_show_score_status', 'yes' ) )
+			return;
+
+		if ( ! isset( $id ) )
+			$id = get_the_ID();
+		
+		// Get the winner of the event
+		$winner = sp_get_winner( $id );
+
+		// Return if no winner is set
+		if ( empty( $winner ) )
+			return;
+		
+		// Get the name of the winning team
+		$winner_name = get_the_title( $winner );
+
+		// Get results of the winning team
+		$results = sp_get_results( $id );
+		$winner_results = sp_array_value( $results, $winner, array() );
+
+		// Check that results for the winning team are available
+		if ( ! is_array( $winner_results ) || 0 == sizeof( $winner_results ) ) return;
+		
+		// Get the main result option
+		$main = sp_get_main_result_option();
+
+		// Check that main results exist for the winning team
+		if ( ! array_key_exists( $main, $winner_results ) ) return;
+		
+		// Get index of winning team
+		$winner_index = array_search( $winner, array_keys( $results ) );
+		if ( ! in_array( $winner_index, array( 0, 1 ) ) )
+			return;
+		
+		// Find the main result of the winning team
+		$val = reset( $winner_results );
+		while ( key( $winner_results ) !== $main ) {
+			$val = next( $winner_results );
+		}
+		
+		// Get the next result if winning team was batting last
+		if ( 0 == $winner_index ) {
+			$loser = sp_array_value( array_keys( $results ), 1, false );
+		
+			// Return if no entry for losing team
+			if ( false === $loser )
+				return;
+			
+			// Get results of the losing team
+			$loser_results = sp_array_value( $results, $loser, array() );
+
+			// Check that results for the losing team are available
+			if ( ! is_array( $loser_results ) || 0 == sizeof( $loser_results ) ) return;
+		
+			// Check that main results exist for the losing team
+			if ( ! array_key_exists( $main, $loser_results ) ) return;
+		
+			// Find the main result of the losing team
+			$loser_val = reset( $loser_results );
+			while ( key( $loser_results ) !== $main ) {
+				$loser_val = next( $loser_results );
+			}
+			
+			// Subtract runs from losing team
+			if ( is_numeric( $loser_val ) ) {
+				$val -= $loser_val;
+			}
+			
+		} else {
+			$val = next( $winner_results );
+		
+			// Return if no result to report
+			if ( false === $val )
+				return;
+			
+			// Subtract wickets from 10
+			$val = 10 - $val;
+		}
+			
+		?>
+		<p class="sp-event-score-status sp-align-center">
+			<?php
+			if ( 0 == $winner_index ) {
+				printf( __( '%1$s won by %2$s runs', 'sportspress-for-cricket' ), $winner_name, $val );
+			} else {
+				printf( __( '%1$s won by %2$s wickets', 'sportspress-for-cricket' ), $winner_name, $val );
+			}
+			?>
+		</p>
+		<?php
+	}
 }
 
 endif;
 
 new SportsPress_Cricket();
+
