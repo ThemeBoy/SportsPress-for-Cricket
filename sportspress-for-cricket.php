@@ -67,6 +67,7 @@ class SportsPress_Cricket {
 		add_filter( 'sportspress_calendar_team_result_admin', array( $this, 'format_result' ), 10, 3 );
 		add_filter( 'sportspress_event_list_main_results', array( $this, 'format_results' ), 10, 2 );
 		add_filter( 'sportspress_event_blocks_team_result_or_time', array( $this, 'format_results' ), 10, 2 );
+		add_filter( 'sportspress_main_results', array( $this, 'format_results' ), 10, 2 );
 		
 		// Display outcome below results
 		add_action( 'sportspress_before_single_event', array( $this, 'output_event_score_status' ), 15 );
