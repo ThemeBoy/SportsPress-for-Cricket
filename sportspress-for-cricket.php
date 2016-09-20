@@ -73,7 +73,6 @@ class SportsPress_Cricket {
 		
 		// Display outcome below results
 		add_action( 'sportspress_after_event_logos', array( $this, 'output_event_score_status' ) );
-		add_filter( 'sportspress_main_results', array( $this, 'format_results' ), 10, 2 );
 	}
 
 	/**
