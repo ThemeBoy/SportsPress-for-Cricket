@@ -3,8 +3,8 @@ Contributors: ThemeBoy, brianmiyaji, aylaview
 Tags: sport, sports, players, statistics, stats, metrics, data, fixtures, results, standings, leaderboards, cricket
 Donate link: http://tboy.co/donate
 Requires at least: 3.8
-Tested up to: 4.3
-Stable tag: 0.9.3
+Tested up to: 4.4
+Stable tag: 1.0.2
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -15,7 +15,7 @@ SportsPress for Cricket is an extension for SportsPress, an all-in-one sports da
 = Create a Professional Cricket Website =
 Transform your WordPress blog into a fully configurable cricket website. Features a suite of cricket tools including separate batting and bowling statistics, a row to display extras and players who did not bat.
 
-SportsPress for Cricket is currently in Beta. Please feel free to share your feedback with us so we can continue to develop and improve SportsPress for Cricket!
+Please feel free to share your feedback with us so we can continue to develop and improve SportsPress for Cricket!
 
 [youtube http://www.youtube.com/watch?v=LQ68LB1_9rU]
 
@@ -34,6 +34,7 @@ Looking for more advanced cricket functionality? Upgrade to [SportsPress Pro](ht
 = SportsPress Themes for Clubs =
 * [Football Club](http://tboy.co/fc)
 * [Premier](http://tboy.co/premier)
+* [Emblem](http://tboy.co/emblem)
 
 = Please Rate, Vote, and Enjoy! =
 Your feedback is much appreciated and makes all the difference in improving SportsPress for Cricket.
@@ -82,6 +83,16 @@ Yes; SportsPress for Cricket will work with any theme, but may require some styl
 Yes, CSV importers are included with the core SportsPress plugin. Go to Tools > Import and choose from one of the SportsPress CSV importers.
 
 == Changelog ==
+
+= 1.0.2 =
+* Localization - Enable loading translation files from directory.
+
+= 1.0.1 =
+* Feature - Display detailed score status below match results.
+* Tweak - Prevent output of wickets when there are none left.
+
+= 1.0 - First Official Launch Out of Beta =
+* Refactor - Notes and extras refactored to work with SportsPress version 1.9.19.
 
 = 0.9.3 =
 * Tweak - Output generator tag in source code.
