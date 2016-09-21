@@ -69,10 +69,10 @@ class SportsPress_Cricket {
 		add_filter( 'sportspress_event_list_main_results', array( $this, 'format_results' ), 10, 2 );
 		add_filter( 'sportspress_event_blocks_team_result_or_time', array( $this, 'format_results' ), 10, 2 );
 		add_filter( 'sportspress_main_results_or_time', array( $this, 'format_results' ), 10, 2 );
+		add_filter( 'sportspress_main_results', array( $this, 'format_results' ), 10, 2 );
 		
 		// Display outcome below results
-		add_action( 'sportspress_before_single_event', array( $this, 'output_event_score_status' ), 15 );
-		add_filter( 'sportspress_event_template_options', array( $this, 'event_template_options' ) );
+		add_action( 'sportspress_after_event_logos', array( $this, 'output_event_score_status' ) );
 	}
 
 	/**
@@ -342,6 +342,20 @@ class SportsPress_Cricket {
 	 * Add event logo options.
 	*/
 	public function event_logo_options( $options = array() ) {
+		$len = sizeof( $options );
+		
+		$temp = $options[ $len - 1 ];
+
+		$options[ $len - 1 ] = array(
+			'desc' 		=> __( 'Score Status', 'sportspress-for-cricket' ),
+			'id' 		=> 'sportspress_event_show_score_status',
+			'default'	=> 'yes',
+			'type' 		=> 'checkbox',
+			'checkboxgroup'	=> '',
+		);
+		
+		$options[] = $temp;
+
 		$options[] = array(
 			'title' 	=> __( 'Delimiter', 'sportspress-for-cricket' ),
 			'id' 		=> 'sportspress_event_logos_results_delimiter',
@@ -406,7 +420,7 @@ class SportsPress_Cricket {
 	/**
 	 * Output event score status.
 	*/
-	public function output_event_score_status() {
+	public function output_event_score_status( $id = 0 ) {
 		if ( 'yes' !== get_option( 'sportspress_event_show_score_status', 'yes' ) )
 			return;
 
@@ -498,25 +512,9 @@ class SportsPress_Cricket {
 		</p>
 		<?php
 	}
-
-	/**
-	 * Add option to display event score status.
-	*/
-	public function event_template_options( $options = array() ) {
-		$option = array(
-			array(
-				'desc' 		=> __( 'Score Status', 'sportspress-for-cricket' ),
-				'id' 		=> 'sportspress_event_show_score_status',
-				'default'	=> 'yes',
-				'type' 		=> 'checkbox',
-				'checkboxgroup'		=> '',
-			),
-		);
-		array_splice( $options, 1, 0, $option );
-		return $options;
-	}
 }
 
 endif;
 
 new SportsPress_Cricket();
+
