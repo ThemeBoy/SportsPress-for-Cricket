@@ -3,8 +3,8 @@ Contributors: ThemeBoy, brianmiyaji, aylaview
 Tags: sport, sports, players, statistics, stats, metrics, data, fixtures, results, standings, leaderboards, cricket
 Donate link: http://tboy.co/donate
 Requires at least: 3.8
-Tested up to: 4.4
-Stable tag: 1.0.2
+Tested up to: 4.6
+Stable tag: 1.1
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -83,6 +83,11 @@ Yes; SportsPress for Cricket will work with any theme, but may require some styl
 Yes, CSV importers are included with the core SportsPress plugin. Go to Tools > Import and choose from one of the SportsPress CSV importers.
 
 == Changelog ==
+
+= 1.1 =
+* Feature - Automatically add extras to totals in box score.
+* Feature - Improve compatibility with tournaments and scoreboard modules.
+* Tweak - Move score status setting for SportsPress 2.1.
 
 = 1.0.2 =
 * Localization - Enable loading translation files from directory.
