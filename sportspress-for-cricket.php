@@ -73,6 +73,9 @@ class SportsPress_Cricket {
 		
 		// Display outcome below results
 		add_action( 'sportspress_after_event_logos', array( $this, 'output_event_score_status' ) );
+
+		// Define default sport
+		add_filter( 'sportspress_default_sport', array( $this, 'default_sport' ) );
 	}
 
 	/**
@@ -169,7 +172,7 @@ class SportsPress_Cricket {
 				'name'        => 'SportsPress',
 				'slug'        => 'sportspress',
 				'required'    => true,
-				'version'     => '2.1',
+				'version'     => '2.3',
 				'is_callable' => array( 'SportsPress', 'instance' ),
 			),
 		);
@@ -512,6 +515,13 @@ class SportsPress_Cricket {
 			?>
 		</p>
 		<?php
+	}
+
+	/**
+	 * Define default sport.
+	*/
+	public function default_sport() {
+		return 'cricket';
 	}
 }
 
