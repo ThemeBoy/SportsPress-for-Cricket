@@ -3,8 +3,8 @@ Contributors: ThemeBoy, brianmiyaji, aylaview
 Tags: sport, sports, players, statistics, stats, metrics, data, fixtures, results, standings, leaderboards, cricket
 Donate link: http://tboy.co/donate
 Requires at least: 3.8
-Tested up to: 4.6
-Stable tag: 1.1
+Tested up to: 4.7
+Stable tag: 1.1.1
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -32,9 +32,11 @@ Please feel free to share your feedback with us so we can continue to develop an
 Looking for more advanced cricket functionality? Upgrade to [SportsPress Pro](http://tboy.co/pro) to get access to more advanced features for your cricket club website.
 
 = SportsPress Themes for Clubs =
+* [Courtside](http://tboy.co/courtside)
 * [Football Club](http://tboy.co/fc)
 * [Premier](http://tboy.co/premier)
 * [Emblem](http://tboy.co/emblem)
+* [Marquee](http://tboy.co/marquee)
 
 = Please Rate, Vote, and Enjoy! =
 Your feedback is much appreciated and makes all the difference in improving SportsPress for Cricket.
@@ -83,6 +85,9 @@ Yes; SportsPress for Cricket will work with any theme, but may require some styl
 Yes, CSV importers are included with the core SportsPress plugin. Go to Tools > Import and choose from one of the SportsPress CSV importers.
 
 == Changelog ==
+
+= 1.1.1 =
+* Tweak - Update TGMPA library.
 
 = 1.1 =
 * Feature - Automatically add extras to totals in box score.
