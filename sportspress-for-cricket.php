@@ -301,7 +301,7 @@ class SportsPress_Cricket {
 	public function performance_total( $value = 0, $data = array(), $key = null ) {
 		if ( ! $key ) return $value;
 		
-		$main = sp_get_main_result_option();
+		$main = sp_get_main_performance_option();
 		if ( $key !== $main ) return $value;
 		
 		$extras = sp_array_value( sp_array_value( $data, 0, array() ), '_extras', 0 );
