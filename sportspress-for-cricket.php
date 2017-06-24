@@ -5,7 +5,7 @@
  * Description: A suite of cricket features for SportsPress.
  * Author: ThemeBoy
  * Author URI: http://themeboy.com/
- * Version: 1.1.1
+ * Version: 1.1.2
  *
  * Text Domain: sportspress-for-cricket
  * Domain Path: /languages/
@@ -20,7 +20,7 @@ if ( ! class_exists( 'SportsPress_Cricket' ) ) :
  * Main SportsPress Cricket Class
  *
  * @class SportsPress_Cricket
- * @version	1.1.1
+ * @version	1.1.2
  */
 class SportsPress_Cricket {
 
@@ -83,7 +83,7 @@ class SportsPress_Cricket {
 	*/
 	private function define_constants() {
 		if ( !defined( 'SP_CRICKET_VERSION' ) )
-			define( 'SP_CRICKET_VERSION', '1.1.1' );
+			define( 'SP_CRICKET_VERSION', '1.1.2' );
 
 		if ( !defined( 'SP_CRICKET_URL' ) )
 			define( 'SP_CRICKET_URL', plugin_dir_url( __FILE__ ) );
@@ -305,7 +305,10 @@ class SportsPress_Cricket {
 		if ( $key !== $main ) return $value;
 		
 		$extras = sp_array_value( sp_array_value( $data, 0, array() ), '_extras', 0 );
-		$extras = substr( $extras, 0, strpos( $extras, ' ' ) );
+		$space = strpos( $extras, ' ' );
+		if ( $space ) {
+			$extras = substr( $extras, 0, $space );
+		}
 		
 		if ( is_numeric( $value ) )
 			$value += $extras;
